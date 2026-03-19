@@ -11,7 +11,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анекдот-Кость | Озвучка 🔊</title>
+    <title>Анекдот-Кость | Авто-озвучка 🔊</title>
     <style>
         body { 
             display: flex; 
@@ -60,13 +60,11 @@
         }
 
         .controls-container { 
-            display: flex; 
-            gap: 15px; 
             margin-bottom: 50px;
         }
         
         .btn { 
-            padding: 12px 20px; 
+            padding: 12px 25px; 
             background: white; 
             border: 2px solid #333; 
             border-radius: 10px; 
@@ -93,12 +91,11 @@
 </head>
 <body>
 
-    <div id="joke-display">Нажми на кубик и послушай анекдот! 🎲</div>
+    <div id="joke-display">Нажми на кубик, чтобы услышать анекдот! 🎲</div>
 
     <div class="dice-button" onclick="getRandomJoke()">🎲</div>
 
     <div class="controls-container">
-        <button class="btn" onclick="speakJoke()">🔊 Послушать</button>
         <button class="btn" onclick="shareJoke()">🔗 Поделиться</button>
     </div>
 
@@ -132,8 +129,11 @@
 
         function getRandomJoke() {
             const display = document.getElementById('joke-display');
+            
+            // 1. Останавливаем старую озвучку
             window.speechSynthesis.cancel();
             
+            // 2. Выбираем новый анекдот
             let randomIndex;
             do {
                 randomIndex = Math.floor(Math.random() * jokes.length);
@@ -141,16 +141,13 @@
             
             currentJoke = jokes[randomIndex];
             display.innerText = currentJoke;
+
+            // 3. Автоматически озвучиваем
+            speakJoke(currentJoke);
         }
 
-        function speakJoke() {
-            if (!currentJoke || currentJoke.includes("Нажми на кубик")) {
-                alert("Сначала выбей анекдот!");
-                return;
-            }
-
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(currentJoke);
+        function speakJoke(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
             
             const voices = window.speechSynthesis.getVoices();
             const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) 
@@ -166,7 +163,10 @@
         }
 
         async function shareJoke() {
-            if (!currentJoke || currentJoke.includes("Нажми на кубик")) return;
+            if (!currentJoke || currentJoke.includes("Нажми на кубик")) {
+                alert("Сначала выбей анекдот!");
+                return;
+            }
             if (navigator.share) {
                 try { await navigator.share({ title: 'Ору! 😂', text: currentJoke, url: window.location.href }); } catch (err) {}
             } else {
