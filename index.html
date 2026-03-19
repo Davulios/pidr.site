@@ -11,25 +11,29 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анекдот-Кость | Авто-озвучка 🔊</title>
+    <title>Анекдот-Кость | pidr.site</title>
     <style>
         body { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; 
+            /* Опускаем контент сверху вниз */
+            justify-content: flex-start; 
+            padding-top: 10vh; 
             min-height: 100vh; 
             margin: 0; 
             background-color: #f0f2f5; 
             font-family: 'Segoe UI', sans-serif; 
+            box-sizing: border-box;
         }
         
         #joke-display { 
             font-size: 1.5rem; 
             text-align: center; 
-            max-width: 80%; 
-            margin-bottom: 40px; 
-            min-height: 120px; 
+            max-width: 85%; 
+            margin-bottom: 30px; 
+            /* Фиксируем минимальную высоту, чтобы кубик не прыгал */
+            min-height: 160px; 
             color: #333; 
             line-height: 1.4; 
             display: flex; 
@@ -42,7 +46,7 @@
             height: 100px; 
             background-color: white; 
             border: 4px solid #333; 
-            border-radius: 15px; 
+            border-radius: 20px; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
@@ -51,7 +55,7 @@
             box-shadow: 0 6px 0 #333; 
             transition: all 0.1s; 
             user-select: none; 
-            margin-bottom: 30px; 
+            margin-bottom: 40px; 
         }
         
         .dice-button:active { 
@@ -64,12 +68,12 @@
         }
         
         .btn { 
-            padding: 12px 25px; 
+            padding: 15px 30px; 
             background: white; 
             border: 2px solid #333; 
-            border-radius: 10px; 
+            border-radius: 12px; 
             cursor: pointer; 
-            font-size: 1rem; 
+            font-size: 1.1rem; 
             font-weight: bold;
             box-shadow: 0 4px 0 #333; 
             transition: 0.1s; 
@@ -84,7 +88,7 @@
             margin-top: auto; 
             padding: 20px; 
             font-size: 0.8rem; 
-            color: #777; 
+            color: #ccc; 
             text-align: center; 
         }
     </style>
@@ -100,11 +104,10 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 pidr.site — Смех продлевает жизнь</p>
+        <p>&copy; 2026 pidr.site — Юмор без границ</p>
     </footer>
 
     <script>
-        // Прогрев голосов
         window.speechSynthesis.getVoices();
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
@@ -139,11 +142,8 @@
 
         function getRandomJoke() {
             const display = document.getElementById('joke-display');
-            
-            // 1. Останавливаем старую озвучку
             window.speechSynthesis.cancel();
             
-            // 2. Выбираем новый анекдот
             let randomIndex;
             do {
                 randomIndex = Math.floor(Math.random() * jokes.length);
@@ -152,23 +152,19 @@
             currentJoke = jokes[randomIndex];
             display.innerText = currentJoke;
 
-            // 3. Автоматически озвучиваем
             speakJoke(currentJoke);
         }
 
         function speakJoke(text) {
             const utterance = new SpeechSynthesisUtterance(text);
-            
             const voices = window.speechSynthesis.getVoices();
             const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) 
                                   || voices.find(v => v.lang.includes('ru'));
             
             if (preferredVoice) utterance.voice = preferredVoice;
-
             utterance.lang = 'ru-RU';
             utterance.pitch = 1.1; 
             utterance.rate = 1.0;  
-            
             window.speechSynthesis.speak(utterance);
         }
 
