@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анекдот-Кость</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Кнопка "Поделиться" в правом верхнем углу */
+        .share-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: white;
+            border: 2px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 0 #333;
+            transition: 0.1s;
+        }
+
+        .share-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #333;
+        }
+
+        #joke-display {
+            font-size: 1.5rem;
+            text-align: center;
+            max-width: 80%;
+            margin-bottom: 50px;
+            min-height: 100px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        /* Кнопка-кость */
+        .dice-button {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border: 4px solid #333;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            box-shadow: 0 6px 0 #333;
+            transition: all 0.1s;
+            user-select: none;
+        }
+
+        .dice-button:active {
+            transform: translateY(4px) rotate(10deg); /* Добавил легкий поворот при клике */
+            box-shadow: 0 2px 0 #333;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="share-btn" onclick="shareJoke()">🔗 Поделиться</button>
+
+    <div id="joke-display">Нажми на кубик и будет смешно </div>
+
+    <div class="dice-button" onclick="getRandomJoke()">🎲</div>
+
+    <script>
+        const jokes = [
+            "Когда я была молодая, мне повстречалась добрая волшебница, которая предложила мне на выбор хорошую память на всю жизнь или богатого мужа. Я уже даже и не помню, что я тогда выбрала…",
+            "– У вас есть рекомендации с прежнего места работы?\n– Да, мне там порекомендовали поискать другую работу…",
+            "Золотая рыбка:\n– Что тебе, ящик водки или вечную жизнь?\n– Ящик водки! Все равно через семь миллиардов лет солнце погаснет!",
+            "Русалка села на шпагат.",
+            "Колобок повесился.",
+            "Старшина обходит строй новобранцев.\n- Так, у тебя какое образование?\n- Семь классов!\n- Хорошо, а у тебя?\n- МГУ!\n- Чего мычишь, читать-то умеешь?",
+            "— Насок!!\n— Какой носок????\n— Насок!!!!\n— Я не вижу никаких носков!!!!\n— Сок возьми, дура!!!))))",
+            "Клиент — официанту:\n- А это правда, что вы за нами доедаете?\n- Нет, что вы... Это вы за нами доедаете.",
+            "Как-то застал соседа по коммуналке за кражей на кухне. Он долго меня стыдил, что подглядывать нехорошо.",
+            "- Британские учёные установили, что шоколад поднимает настроение...\n- Они, наверное, ещё водку не пробовали.",
+            "Упал ежик в глубокую пустую яму, прыгал час, прыгал два, потом устал и говорит: б..я, если через пять минут не вылезу — за лестницей пойду!"
+        ];
+
+        let currentJoke = "";
+
+        function getRandomJoke() {
+            const display = document.getElementById('joke-display');
+            const randomIndex = Math.floor(Math.random() * jokes.length);
+            currentJoke = jokes[randomIndex];
+            display.innerText = currentJoke;
+        }
+
+        // Функция "Поделиться"
+        async function shareJoke() {
+            if (!currentJoke) {
+                alert("Сначала выбей анекдот!");
+                return;
+            }
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Ору с этого анекдота!',
+                        text: currentJoke,
+                        url: window.location.href // Ссылка на твой сайт
+                    });
+                } catch (err) {
+                    console.log('Пользователь отменил или ошибка: ', err);
+                }
+            } else {
+                // Если браузер старый, просто копируем в буфер обмена
+                navigator.clipboard.writeText(currentJoke);
+                alert("Анекдот скопирован в буфер обмена!");
+            }
+        }
+    </script>
+</body>
+</html>
