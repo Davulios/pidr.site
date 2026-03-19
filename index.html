@@ -156,15 +156,25 @@
         }
 
         function speakJoke(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) || voices.find(v => v.lang.includes('ru'));
-            if (preferredVoice) utterance.voice = preferredVoice;
-            utterance.lang = 'ru-RU';
-            utterance.pitch = 1.1; 
-            utterance.rate = 1.0;  
-            window.speechSynthesis.speak(utterance);
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Получаем список голосов прямо в момент вызова
+        const voices = synth.getVoices();
+        
+        // Ищем русский голос (сначала Google, потом любой RU)
+        const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) 
+                            || voices.find(v => v.lang.includes('ru'));
+
+        if (preferredVoice) {
+            utterance.voice = preferredVoice;
         }
+        
+        utterance.lang = 'ru-RU';
+        utterance.pitch = 1.0; 
+        utterance.rate = 1.0; 
+        
+        synth.speak(utterance);
+    }
 
         async function shareJoke() {
             if (!currentJoke || currentJoke.includes("Нажми на кубик")) {
