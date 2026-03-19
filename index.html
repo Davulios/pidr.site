@@ -246,6 +246,18 @@
         if (warning) warning.style.display = 'block';
     }
 }
+        function testSpeech() {
+    return new Promise((resolve) => {
+        const utterance = new SpeechSynthesisUtterance("test");
+        
+        utterance.onstart = () => resolve(true);
+        utterance.onerror = () => resolve(false);
+
+        speechSynthesis.speak(utterance);
+
+        setTimeout(() => resolve(false), 500);
+    });
+        }
 
 // Запускаем проверку сразу при загрузке страницы
 checkAndShowWarning();
