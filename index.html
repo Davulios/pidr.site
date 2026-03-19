@@ -24,7 +24,7 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: flex-start; 
-            padding-top: 20vh; /* Опустили контент ниже */
+            padding-top: 20vh; 
             min-height: 100vh; 
             margin: 0; 
             background-color: #f0f2f5; 
@@ -112,9 +112,15 @@
     </footer>
 
     <script>
-        window.speechSynthesis.getVoices();
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+        // Инициализация синтезатора
+        const synth = window.speechSynthesis;
+        let currentJoke = "";
+
+        // Функция принудительной активации звука для мобильных браузеров
+        function initAudioContext() {
+            const utterance = new SpeechSynthesisUtterance("");
+            synth.speak(utterance);
+            synth.cancel();
         }
 
         const jokes = [
@@ -141,40 +147,45 @@
             "Упал ежик в глубокую пустую яму, прыгал час, прыгал два, потом устал и говорит: блин, если через пять минут не вылезу — за лестницей пойду!",
         ];
 
-        let currentJoke = "";
-
         function getRandomJoke() {
+            // Активируем аудио при первом же клике
+            initAudioContext();
+            
             const display = document.getElementById('joke-display');
-            window.speechSynthesis.cancel();
+            
+            // Останавливаем старую озвучку
+            synth.cancel();
+
             let randomIndex;
             do {
                 randomIndex = Math.floor(Math.random() * jokes.length);
             } while (jokes[randomIndex] === currentJoke && jokes.length > 1);
+
             currentJoke = jokes[randomIndex];
             display.innerText = currentJoke;
-            speakJoke(currentJoke);
+
+            // Запускаем озвучку с микро-задержкой для стабильности в WebView
+            setTimeout(() => {
+                speakJoke(currentJoke);
+            }, 50);
         }
 
         function speakJoke(text) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        
-        // Получаем список голосов прямо в момент вызова
-        const voices = synth.getVoices();
-        
-        // Ищем русский голос (сначала Google, потом любой RU)
-        const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) 
-                            || voices.find(v => v.lang.includes('ru'));
-
-        if (preferredVoice) {
-            utterance.voice = preferredVoice;
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = synth.getVoices();
+            
+            // Пытаемся найти качественный русский голос
+            const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) 
+                                || voices.find(v => v.lang.includes('ru'));
+            
+            if (preferredVoice) utterance.voice = preferredVoice;
+            
+            utterance.lang = 'ru-RU';
+            utterance.pitch = 1.0; 
+            utterance.rate = 1.0;  
+            
+            synth.speak(utterance);
         }
-        
-        utterance.lang = 'ru-RU';
-        utterance.pitch = 1.0; 
-        utterance.rate = 1.0; 
-        
-        synth.speak(utterance);
-    }
 
         async function shareJoke() {
             if (!currentJoke || currentJoke.includes("Нажми на кубик")) {
@@ -182,16 +193,23 @@
                 return;
             }
             if (navigator.share) {
-                try { await navigator.share({ title: 'Ору! 😂', text: currentJoke, url: window.location.href }); } catch (err) {}
+                try { 
+                    await navigator.share({ 
+                        title: 'Ору! 😂', 
+                        text: currentJoke, 
+                        url: window.location.href 
+                    }); 
+                } catch (err) {}
             } else {
                 navigator.clipboard.writeText(currentJoke);
                 alert("Анекдот скопирован!");
             }
         }
-        // Предварительная загрузка голосов для Chrome-подобных браузеров
-    window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
-    };
+
+        // Прогружаем голоса заранее (важно для Chrome/Android)
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = () => synth.getVoices();
+        }
     </script>
 </body>
 </html>
