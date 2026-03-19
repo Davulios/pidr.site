@@ -188,6 +188,10 @@
                 alert("Анекдот скопирован!");
             }
         }
+        // Предварительная загрузка голосов для Chrome-подобных браузеров
+    window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+    };
     </script>
 </body>
 </html>
