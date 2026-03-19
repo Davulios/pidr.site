@@ -10,11 +10,6 @@
     </script>
 
     <meta name="monetag" content="540052224308eb27fa05cf2d3c102473">
-
-    <script>(function(s){s.dataset.zone='10750456',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-
-    <script src="https://5gvci.com/act/files/tag.min.js?z=10750702" data-cfasync="false" async></script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Анекдот-Кость | pidr.site</title>
@@ -24,12 +19,33 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: flex-start; 
-            padding-top: 20vh; 
+            padding-top: 15vh; 
             min-height: 100vh; 
             margin: 0; 
             background-color: #f0f2f5; 
             font-family: 'Segoe UI', sans-serif; 
             box-sizing: border-box;
+        }
+
+        /* Стиль плашки-предупреждения */
+        #browser-warning {
+            display: none;
+            width: 90%;
+            background: #ff4757;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
         
         #joke-display { 
@@ -82,11 +98,6 @@
             box-shadow: 0 4px 0 #333; 
             transition: 0.1s; 
         }
-        
-        .btn:active { 
-            transform: translateY(2px); 
-            box-shadow: 0 2px 0 #333; 
-        }
 
         footer { 
             margin-top: auto; 
@@ -98,6 +109,11 @@
     </style>
 </head>
 <body>
+
+    <div id="browser-warning">
+        ⚠️ Бро, мессенджеры блокируют звук! <br>
+        Нажми "три точки" и выбери <b>"Открыть в браузере"</b> для озвучки.
+    </div>
 
     <div id="joke-display">Нажми на кубик, чтобы услышать анекдот! 🎲</div>
 
@@ -112,12 +128,23 @@
     </footer>
 
     <script>
-        // Инициализация синтезатора
         const synth = window.speechSynthesis;
         let currentJoke = "";
 
-        // Функция принудительной активации звука для мобильных браузеров
-        function initAudioContext() {
+        // Детектор встроенных браузеров
+        function checkBrowser() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isWebView = (ua.includes('Instagram') || ua.includes('FBAN') || ua.includes('FBAV') || ua.includes('Telegram') || ua.includes('VKMobile'));
+            
+            if (isWebView) {
+                document.getElementById('browser-warning').style.display = 'block';
+            }
+        }
+
+        // Запускаем проверку при загрузке
+        checkBrowser();
+
+        function initAudio() {
             const utterance = new SpeechSynthesisUtterance("");
             synth.speak(utterance);
             synth.cancel();
@@ -148,12 +175,8 @@
         ];
 
         function getRandomJoke() {
-            // Активируем аудио при первом же клике
-            initAudioContext();
-            
+            initAudio();
             const display = document.getElementById('joke-display');
-            
-            // Останавливаем старую озвучку
             synth.cancel();
 
             let randomIndex;
@@ -164,26 +187,21 @@
             currentJoke = jokes[randomIndex];
             display.innerText = currentJoke;
 
-            // Запускаем озвучку с микро-задержкой для стабильности в WebView
             setTimeout(() => {
                 speakJoke(currentJoke);
-            }, 50);
+            }, 100);
         }
 
         function speakJoke(text) {
+            if (!synth) return;
             const utterance = new SpeechSynthesisUtterance(text);
             const voices = synth.getVoices();
-            
-            // Пытаемся найти качественный русский голос
-            const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) 
+            const preferredVoice = voices.find(v => v.lang.includes('ru') && (v.name.includes('Google') || v.name.includes('Premium'))) 
                                 || voices.find(v => v.lang.includes('ru'));
             
             if (preferredVoice) utterance.voice = preferredVoice;
-            
             utterance.lang = 'ru-RU';
-            utterance.pitch = 1.0; 
             utterance.rate = 1.0;  
-            
             synth.speak(utterance);
         }
 
@@ -193,23 +211,14 @@
                 return;
             }
             if (navigator.share) {
-                try { 
-                    await navigator.share({ 
-                        title: 'Ору! 😂', 
-                        text: currentJoke, 
-                        url: window.location.href 
-                    }); 
-                } catch (err) {}
+                try { await navigator.share({ title: 'Ору! 😂', text: currentJoke, url: window.location.href }); } catch (err) {}
             } else {
                 navigator.clipboard.writeText(currentJoke);
                 alert("Анекдот скопирован!");
             }
         }
 
-        // Прогружаем голоса заранее (важно для Chrome/Android)
-        if (synth.onvoiceschanged !== undefined) {
-            synth.onvoiceschanged = () => synth.getVoices();
-        }
+        window.speechSynthesis.onvoiceschanged = () => synth.getVoices();
     </script>
 </body>
 </html>
