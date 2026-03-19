@@ -13,42 +13,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Анекдот-Кость | Озвучка 🔊</title>
     <style>
-        body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
+        body { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            background-color: #f0f2f5; 
+            font-family: 'Segoe UI', sans-serif; 
+        }
         
-        .top-buttons { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        #joke-display { 
+            font-size: 1.5rem; 
+            text-align: center; 
+            max-width: 80%; 
+            margin-bottom: 40px; 
+            min-height: 120px; 
+            color: #333; 
+            line-height: 1.4; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
         
-        .btn { padding: 10px 15px; background: white; border: 2px solid #333; border-radius: 10px; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 0 #333; transition: 0.1s; }
-        .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #333; }
+        .dice-button { 
+            width: 100px; 
+            height: 100px; 
+            background-color: white; 
+            border: 4px solid #333; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 3.5rem; 
+            box-shadow: 0 6px 0 #333; 
+            transition: all 0.1s; 
+            user-select: none; 
+            margin-bottom: 30px; 
+        }
         
-        #joke-display { font-size: 1.5rem; text-align: center; max-width: 80%; margin: 40px 0; min-height: 120px; color: #333; line-height: 1.4; display: flex; align-items: center; justify-content: center; }
+        .dice-button:active { 
+            transform: translateY(4px) rotate(10deg); 
+            box-shadow: 0 2px 0 #333; 
+        }
+
+        .controls-container { 
+            display: flex; 
+            gap: 15px; 
+            margin-bottom: 50px;
+        }
         
-        .dice-button { width: 100px; height: 100px; background-color: white; border: 4px solid #333; border-radius: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; box-shadow: 0 6px 0 #333; transition: all 0.1s; user-select: none; margin-bottom: 50px; }
-        .dice-button:active { transform: translateY(4px) rotate(10deg); box-shadow: 0 2px 0 #333; }
+        .btn { 
+            padding: 12px 20px; 
+            background: white; 
+            border: 2px solid #333; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            font-weight: bold;
+            box-shadow: 0 4px 0 #333; 
+            transition: 0.1s; 
+        }
         
-        footer { margin-top: auto; padding: 20px; font-size: 0.8rem; color: #777; text-align: center; }
+        .btn:active { 
+            transform: translateY(2px); 
+            box-shadow: 0 2px 0 #333; 
+        }
+        
+        footer { 
+            margin-top: auto; 
+            padding: 20px; 
+            font-size: 0.8rem; 
+            color: #777; 
+            text-align: center; 
+        }
     </style>
 </head>
 <body>
-
-    <div class="top-buttons">
-        <button class="btn" onclick="speakJoke()">🔊 Послушать</button>
-        <button class="btn" onclick="shareJoke()">🔗 Поделиться</button>
-    </div>
 
     <div id="joke-display">Нажми на кубик и послушай анекдот! 🎲</div>
 
     <div class="dice-button" onclick="getRandomJoke()">🎲</div>
 
+    <div class="controls-container">
+        <button class="btn" onclick="speakJoke()">🔊 Послушать</button>
+        <button class="btn" onclick="shareJoke()">🔗 Поделиться</button>
+    </div>
+
     <footer>
-        <p>&copy; 2026 pidr.site — Теперь мы еще и говорим!</p>
+        <p>&copy; 2026 pidr.site — Смех продлевает жизнь</p>
     </footer>
 
     <script>
-        // Прогрев голосов для браузера
-window.speechSynthesis.getVoices();
-if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
-}
+        // Прогрев голосов
+        window.speechSynthesis.getVoices();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+        }
+
         const jokes = [
             "Когда я была молодая, мне повстречалась добрая волшебница, которая предложила мне на выбор хорошую память на всю жизнь или богатого мужа. Я уже даже и не помню, что я тогда выбрала…",
             "– У вас есть рекомендации с прежнего места работы?\n– Да, мне там порекомендовали поискать другую работу…",
@@ -68,7 +132,6 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
 
         function getRandomJoke() {
             const display = document.getElementById('joke-display');
-            // Останавливаем озвучку, если она шла, при смене анекдота
             window.speechSynthesis.cancel();
             
             let randomIndex;
@@ -80,19 +143,15 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
             display.innerText = currentJoke;
         }
 
-        // ФУНКЦИЯ ОЗВУЧКИ
-        // Улучшенная функция озвучки
         function speakJoke() {
             if (!currentJoke || currentJoke.includes("Нажми на кубик")) {
                 alert("Сначала выбей анекдот!");
                 return;
             }
 
-            window.speechSynthesis.cancel(); // Стоп, если уже говорит
-
+            window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(currentJoke);
             
-            // Пытаемся найти более живой голос (например, Google или Premium)
             const voices = window.speechSynthesis.getVoices();
             const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) 
                                   || voices.find(v => v.lang.includes('ru'));
@@ -100,14 +159,14 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
             if (preferredVoice) utterance.voice = preferredVoice;
 
             utterance.lang = 'ru-RU';
-            utterance.pitch = 1.1; // Чуть выше тон, чтобы не было депрессивного баса
-            utterance.rate = 1.0;  // Нормальная скорость
+            utterance.pitch = 1.1; 
+            utterance.rate = 1.0;  
             
             window.speechSynthesis.speak(utterance);
         }
 
         async function shareJoke() {
-            if (!currentJoke) return;
+            if (!currentJoke || currentJoke.includes("Нажми на кубик")) return;
             if (navigator.share) {
                 try { await navigator.share({ title: 'Ору! 😂', text: currentJoke, url: window.location.href }); } catch (err) {}
             } else {
