@@ -44,6 +44,11 @@
     </footer>
 
     <script>
+        // Прогрев голосов для браузера
+window.speechSynthesis.getVoices();
+if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
         const jokes = [
             "Когда я была молодая, мне повстречалась добрая волшебница, которая предложила мне на выбор хорошую память на всю жизнь или богатого мужа. Я уже даже и не помню, что я тогда выбрала…",
             "– У вас есть рекомендации с прежнего места работы?\n– Да, мне там порекомендовали поискать другую работу…",
