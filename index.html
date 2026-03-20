@@ -8,11 +8,8 @@
       gtag('js', new Date());
       gtag('config', 'G-S9EL443J08');
     </script>
-
     <meta name="monetag" content="540052224308eb27fa05cf2d3c102473">
-
     <script>(function(s){s.dataset.zone='10750456',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-
     <script src="https://5gvci.com/act/files/tag.min.js?z=10750702" data-cfasync="false" async></script>
 
     <meta charset="UTF-8">
@@ -24,7 +21,7 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: flex-start; 
-            padding-top: 20vh; 
+            padding-top: 15vh; 
             min-height: 100vh; 
             margin: 0; 
             background-color: #f0f2f5; 
@@ -32,11 +29,20 @@
             box-sizing: border-box;
         }
         
+        /* Контейнер для текста и иконки звука */
+        .joke-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
         #joke-display { 
             font-size: 1.5rem; 
             text-align: center; 
-            max-width: 85%; 
-            margin-bottom: 30px; 
+            margin-bottom: 10px; 
             min-height: 160px; 
             color: #333; 
             line-height: 1.4; 
@@ -44,6 +50,22 @@
             align-items: center; 
             justify-content: center; 
         }
+
+        /* Кнопка включения звука */
+        .sound-toggle {
+            font-size: 1.8rem;
+            cursor: pointer;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            user-select: none;
+        }
+        .sound-toggle:active { transform: scale(0.9); }
+        .sound-toggle.enabled { color: #2ecc71; border: 2px solid #2ecc71; }
+        .sound-toggle.disabled { color: #95a5a6; border: 2px solid #95a5a6; opacity: 0.6; }
         
         .dice-button { 
             width: 100px; 
@@ -67,10 +89,6 @@
             box-shadow: 0 2px 0 #333; 
         }
 
-        .controls-container { 
-            margin-bottom: 50px;
-        }
-        
         .btn { 
             padding: 15px 30px; 
             background: white; 
@@ -88,44 +106,33 @@
             box-shadow: 0 2px 0 #333; 
         }
 
-        footer { 
-            margin-top: auto; 
-            padding: 20px; 
-            font-size: 0.8rem; 
-            color: #ccc; 
-            text-align: center; 
+        #browser-warning {
+            display: none; 
+            width: 90%;
+            background: #ff4757;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            margin: 10px auto 20px auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-         /* Стиль плашки-предупреждения */
-#browser-warning {
-    display: none; /* Скрыто по умолчанию */
-    width: 90%;
-    background: #ff4757;
-    color: white;
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
-    font-weight: bold;
-    margin: 10px auto 20px auto;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    animation: shake 0.5s ease-in-out;
-}
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}     
-        
+        footer { margin-top: auto; padding: 20px; font-size: 0.8rem; color: #ccc; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="browser-warning">
-    ⚠️ Бро, мессенджеры блокируют звук! <br>
-    Нажми "три точки" и выбери <b>"Открыть в браузере"</b> для озвучки.
-</div>
+        ⚠️ Бро, мессенджеры блокируют звук! <br>
+        Нажми "три точки" и выбери <b>"Открыть в браузере"</b>.
+    </div>
 
-    <div id="joke-display">Нажми на кубик, чтобы услышать анекдот! 🎲</div>
+    <div class="joke-container">
+        <div id="joke-display">Нажми на кубик, чтобы выбить анекдот! 🎲</div>
+        <div id="sound-btn" class="sound-toggle disabled" onclick="toggleSound()">🔇</div>
+    </div>
 
     <div class="dice-button" onclick="getRandomJoke()">🎲</div>
 
@@ -138,15 +145,28 @@
     </footer>
 
     <script>
-        // Инициализация синтезатора
         const synth = window.speechSynthesis;
         let currentJoke = "";
+        let isSoundEnabled = false; // По умолчанию выключено
 
-        // Функция принудительной активации звука для мобильных браузеров
-        function initAudioContext() {
-            const utterance = new SpeechSynthesisUtterance("");
-            synth.speak(utterance);
-            synth.cancel();
+        // Функция переключения звука
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            const btn = document.getElementById('sound-btn');
+            
+            if (isSoundEnabled) {
+                btn.innerText = "🔊";
+                btn.classList.remove('disabled');
+                btn.classList.add('enabled');
+                // Принудительная активация для мобилок при первом включении
+                const ut = new SpeechSynthesisUtterance("");
+                synth.speak(ut);
+            } else {
+                btn.innerText = "🔇";
+                btn.classList.remove('enabled');
+                btn.classList.add('disabled');
+                synth.cancel(); // Сразу замолкаем, если выключили
+            }
         }
 
         const jokes = [
@@ -159,27 +179,14 @@
             "Глухой вор вскрыл гараж и обнаружил внутри рок-группу.",
             "Все еще жду, когда мне в жизни пригодятся дециметры.",
             "— Подсудимый, что вас побудило ограбить банк? — Он первый начал!",
-            "— А в какой концлагерь нас везут? — Не знаю, не интересуюсь политикой.",
-            "Когда я была молодая, мне повстречалась добрая волшебница, которая предложила мне на выбор хорошую память на всю жизнь или богатого мужа. Я уже даже и не помню, что я тогда выбрала…",
-            "– У вас есть рекомендации с прежнего места работы?\n– Да, мне там порекомендовали поискать другую работу…",
-            "Золотая рыбка:\n– Что тебе, ящик водки или вечную жизнь?\n– Ящик водки! Все равно через семь миллиардов лет солнце погаснет!",
             "Русалка села на шпагат.",
             "Колобок повесился.",
-            "Старшина обходит строй новобранцев.\n- Так, у тебя какое образование?\n- Семь классов!\n- Хорошо, а у тебя?\n- МГУ!\n- Чего мычишь, читать-то умеешь?",
-            "На сок!! Какой носок? На сок! Я не вижу никаких носков! Сок возьми, дура!",
-            "Клиент — официанту:\n- А это правда, что вы за нами доедаете?\n- Нет, что вы... Это вы за нами доедаете.",
-            "Как-то застал соседа по коммуналке за кражей на кухне. Он долго меня стыдил, что подглядывать нехорошо.",
             "Британские учёные установили, что шоколад поднимает настроение... Они, наверное, ещё водку не пробовали.",
             "Упал ежик в глубокую пустую яму, прыгал час, прыгал два, потом устал и говорит: блин, если через пять минут не вылезу — за лестницей пойду!",
         ];
 
         function getRandomJoke() {
-            // Активируем аудио при первом же клике
-            initAudioContext();
-            
             const display = document.getElementById('joke-display');
-            
-            // Останавливаем старую озвучку
             synth.cancel();
 
             let randomIndex;
@@ -190,26 +197,22 @@
             currentJoke = jokes[randomIndex];
             display.innerText = currentJoke;
 
-            // Запускаем озвучку с микро-задержкой для стабильности в WebView
-            setTimeout(() => {
-                speakJoke(currentJoke);
-            }, 50);
+            // Озвучка срабатывает ТОЛЬКО если звук включен
+            if (isSoundEnabled) {
+                setTimeout(() => {
+                    speakJoke(currentJoke);
+                }, 50);
+            }
         }
 
         function speakJoke(text) {
             const utterance = new SpeechSynthesisUtterance(text);
             const voices = synth.getVoices();
-            
-            // Пытаемся найти качественный русский голос
             const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) 
                                 || voices.find(v => v.lang.includes('ru'));
             
             if (preferredVoice) utterance.voice = preferredVoice;
-            
             utterance.lang = 'ru-RU';
-            utterance.pitch = 1.0; 
-            utterance.rate = 1.0;  
-            
             synth.speak(utterance);
         }
 
@@ -220,11 +223,7 @@
             }
             if (navigator.share) {
                 try { 
-                    await navigator.share({ 
-                        title: 'Ору! 😂', 
-                        text: currentJoke, 
-                        url: window.location.href 
-                    }); 
+                    await navigator.share({ title: 'Ору! 😂', text: currentJoke, url: window.location.href }); 
                 } catch (err) {}
             } else {
                 navigator.clipboard.writeText(currentJoke);
@@ -232,35 +231,20 @@
             }
         }
 
-        // Прогружаем голоса заранее (важно для Chrome/Android)
+        function checkAndShowWarning() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isWebView = /Telegram|Instagram|FBAN|FBAV|VKMobile|Line|WhatsApp/i.test(ua);
+            if (isWebView) {
+                const warning = document.getElementById('browser-warning');
+                if (warning) warning.style.display = 'block';
+            }
+        }
+
+        checkAndShowWarning();
+        // Подгрузка голосов
         if (synth.onvoiceschanged !== undefined) {
             synth.onvoiceschanged = () => synth.getVoices();
         }
-        function checkAndShowWarning() {
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    // Проверяем на популярные встроенные браузеры
-    const isWebView = /Telegram|Instagram|FBAN|FBAV|VKMobile|Line|WhatsApp/i.test(ua);
-    
-    if (isWebView) {
-        const warning = document.getElementById('browser-warning');
-        if (warning) warning.style.display = 'block';
-    }
-}
-        function testSpeech() {
-    return new Promise((resolve) => {
-        const utterance = new SpeechSynthesisUtterance("test");
-        
-        utterance.onstart = () => resolve(true);
-        utterance.onerror = () => resolve(false);
-
-        speechSynthesis.speak(utterance);
-
-        setTimeout(() => resolve(false), 500);
-    });
-        }
-
-// Запускаем проверку сразу при загрузке страницы
-checkAndShowWarning();
     </script>
 </body>
 </html>
