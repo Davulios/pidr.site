@@ -17,233 +17,110 @@
     <title>Анекдот-Кость | pidr.site</title>
     <style>
         body { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: flex-start; 
-            padding-top: 15vh; 
-            min-height: 100vh; 
-            margin: 0; 
-            background-color: #f0f2f5; 
-            font-family: 'Segoe UI', sans-serif; 
-            box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
+            padding-top: 15vh; min-height: 100vh; margin: 0; background-color: #f0f2f5; 
+            font-family: 'Segoe UI', sans-serif; box-sizing: border-box;
         }
-        
-        /* Контейнер для текста и иконки звука */
-        .joke-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90%;
-            max-width: 600px;
-            position: relative;
-        }
-
+        .joke-container { display: flex; flex-direction: column; align-items: center; width: 90%; max-width: 600px; }
         #joke-display { 
-            font-size: 1.5rem; 
-            text-align: center; 
-            margin-bottom: 10px; 
-            min-height: 160px; 
-            color: #333; 
-            line-height: 1.4; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            font-size: 1.5rem; text-align: center; margin-bottom: 10px; min-height: 160px; 
+            color: #333; line-height: 1.4; display: flex; align-items: center; justify-content: center; 
         }
-
-        /* Кнопка включения звука */
         .sound-toggle {
-            font-size: 1.8rem;
-            cursor: pointer;
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 50%;
-            background: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            user-select: none;
+            font-size: 1.8rem; cursor: pointer; margin-bottom: 20px; padding: 10px;
+            border-radius: 50%; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            user-select: none; transition: 0.2s;
         }
-        .sound-toggle:active { transform: scale(0.9); }
         .sound-toggle.enabled { color: #2ecc71; border: 2px solid #2ecc71; }
         .sound-toggle.disabled { color: #95a5a6; border: 2px solid #95a5a6; opacity: 0.6; }
         
         .dice-button { 
-            width: 100px; 
-            height: 100px; 
-            background-color: white; 
-            border: 4px solid #333; 
-            border-radius: 20px; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 3.5rem; 
-            box-shadow: 0 6px 0 #333; 
-            transition: all 0.1s; 
-            user-select: none; 
-            margin-bottom: 40px; 
+            width: 100px; height: 100px; background-color: white; border: 4px solid #333; 
+            border-radius: 20px; cursor: pointer; display: flex; align-items: center; 
+            justify-content: center; font-size: 3.5rem; box-shadow: 0 6px 0 #333; transition: 0.1s; 
         }
+        .dice-button:active { transform: translateY(4px); box-shadow: 0 2px 0 #333; }
         
-        .dice-button:active { 
-            transform: translateY(4px) rotate(10deg); 
-            box-shadow: 0 2px 0 #333; 
-        }
-
         .btn { 
-            padding: 15px 30px; 
-            background: white; 
-            border: 2px solid #333; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-size: 1.1rem; 
-            font-weight: bold;
-            box-shadow: 0 4px 0 #333; 
-            transition: 0.1s; 
+            padding: 15px 30px; background: white; border: 2px solid #333; border-radius: 12px; 
+            cursor: pointer; font-size: 1.1rem; font-weight: bold; box-shadow: 0 4px 0 #333; margin-top: 30px;
         }
-        
-        .btn:active { 
-            transform: translateY(2px); 
-            box-shadow: 0 2px 0 #333; 
-        }
-
-        #browser-warning {
-            display: none; 
-            width: 90%;
-            background: #ff4757;
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: bold;
-            margin: 10px auto 20px auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        footer { margin-top: auto; padding: 20px; font-size: 0.8rem; color: #ccc; text-align: center; }
+        footer { margin-top: auto; padding: 20px; font-size: 0.8rem; color: #ccc; }
     </style>
 </head>
 <body>
 
-    <div id="browser-warning">
-        ⚠️ Бро, мессенджеры блокируют звук! <br>
-        Нажми "три точки" и выбери <b>"Открыть в браузере"</b>.
-    </div>
+    <audio id="joke-player"></audio>
 
     <div class="joke-container">
-        <div id="joke-display">Нажми на кубик, чтобы выбить анекдот! 🎲</div>
+        <div id="joke-display">Нажми на кубик! 🎲</div>
         <div id="sound-btn" class="sound-toggle disabled" onclick="toggleSound()">🔇</div>
     </div>
 
     <div class="dice-button" onclick="getRandomJoke()">🎲</div>
 
-    <div class="controls-container">
-        <button class="btn" onclick="shareJoke()">🔗 Поделиться</button>
-    </div>
+    <button class="btn" onclick="shareJoke()">🔗 Поделиться</button>
 
-    <footer>
-        <p>&copy; 2026 pidr.site — Юмор без границ</p>
-    </footer>
+    <footer><p>&copy; 2026 pidr.site</p></footer>
 
     <script>
-        const synth = window.speechSynthesis;
-        let currentJoke = "";
-        let isSoundEnabled = false; // По умолчанию выключено
+        const player = document.getElementById('joke-player');
+        let currentJokeIndex = -1;
+        let isSoundEnabled = false;
 
-        // Функция переключения звука
+        const jokes = [
+            "Не спрашивай у мужчины про его доходы, у женщины про возраст, у патриота, откуда у него американский паспорт.", // 0.mp3
+            "Робин Гуд впадал в ступор, встречая людей среднего достатка.", // 1.mp3
+            "Опишите себя в трех словах. Ленивый.", // 2.mp3
+            "— Знаешь, а муж у тебя гуляет. — Пусть гуляет. Он тепло одет.", // 3.mp3
+            "Работница паспортного стола может есть лимон, и при этом ее мимика никак не меняется.", // 4.mp3
+            "Патологоанатом умер, но все равно поехал на работу.", // 5.mp3
+            "Глухой вор вскрыл гараж и обнаружил внутри рок-группу.", // 6.mp3
+            "Все еще жду, когда мне в жизни пригодятся дециметры.", // 7.mp3
+            "— Подсудимый, что вас побудило ограбить банк? — Он первый начал!", // 8.mp3
+            "Русалка села на шпагат.", // 9.mp3
+            "Колобок повесился.", // 10.mp3
+            "Британские учёные установили, что шоколад поднимает настроение... Они, наверное, ещё водку не пробовали.", // 11.mp3
+            "Упал ежик в глубокую пустую яму, прыгал час, прыгал два, потом устал и говорит: блин, если через пять минут не вылезу — за лестницей пойду!" // 12.mp3
+        ];
+
         function toggleSound() {
             isSoundEnabled = !isSoundEnabled;
             const btn = document.getElementById('sound-btn');
-            
-            if (isSoundEnabled) {
-                btn.innerText = "🔊";
-                btn.classList.remove('disabled');
-                btn.classList.add('enabled');
-                // Принудительная активация для мобилок при первом включении
-                const ut = new SpeechSynthesisUtterance("");
-                synth.speak(ut);
-            } else {
-                btn.innerText = "🔇";
-                btn.classList.remove('enabled');
-                btn.classList.add('disabled');
-                synth.cancel(); // Сразу замолкаем, если выключили
-            }
+            btn.innerText = isSoundEnabled ? "🔊" : "🔇";
+            btn.className = `sound-toggle ${isSoundEnabled ? 'enabled' : 'disabled'}`;
+            if (!isSoundEnabled) player.pause();
         }
 
-        const jokes = [
-            "Не спрашивай у мужчины про его доходы, у женщины про возраст, у патриота, откуда у него американский паспорт.",
-            "Робин Гуд впадал в ступор, встречая людей среднего достатка.",
-            "Опишите себя в трех словах. Ленивый.",
-            "— Знаешь, а муж у тебя гуляет. — Пусть гуляет. Он тепло одет.",
-            "Работница паспортного стола может есть лимон, и при этом ее мимика никак не меняется.",
-            "Патологоанатом умер, но все равно поехал на работу.",
-            "Глухой вор вскрыл гараж и обнаружил внутри рок-группу.",
-            "Все еще жду, когда мне в жизни пригодятся дециметры.",
-            "— Подсудимый, что вас побудило ограбить банк? — Он первый начал!",
-            "Русалка села на шпагат.",
-            "Колобок повесился.",
-            "Британские учёные установили, что шоколад поднимает настроение... Они, наверное, ещё водку не пробовали.",
-            "Упал ежик в глубокую пустую яму, прыгал час, прыгал два, потом устал и говорит: блин, если через пять минут не вылезу — за лестницей пойду!",
-        ];
-
         function getRandomJoke() {
-            const display = document.getElementById('joke-display');
-            synth.cancel();
+            // Останавливаем старый звук
+            player.pause();
+            player.currentTime = 0;
 
             let randomIndex;
             do {
                 randomIndex = Math.floor(Math.random() * jokes.length);
-            } while (jokes[randomIndex] === currentJoke && jokes.length > 1);
+            } while (randomIndex === currentJokeIndex);
 
-            currentJoke = jokes[randomIndex];
-            display.innerText = currentJoke;
+            currentJokeIndex = randomIndex;
+            document.getElementById('joke-display').innerText = jokes[currentJokeIndex];
 
-            // Озвучка срабатывает ТОЛЬКО если звук включен
             if (isSoundEnabled) {
-                setTimeout(() => {
-                    speakJoke(currentJoke);
-                }, 50);
+                // Подгружаем файл из папки audio
+                player.src = `audio/${currentJokeIndex}.mp3`;
+                player.play().catch(e => console.log("Файл не найден"));
             }
-        }
-
-        function speakJoke(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            const voices = synth.getVoices();
-            const preferredVoice = voices.find(v => v.lang.includes('ru') && v.name.includes('Google')) 
-                                || voices.find(v => v.lang.includes('ru'));
-            
-            if (preferredVoice) utterance.voice = preferredVoice;
-            utterance.lang = 'ru-RU';
-            synth.speak(utterance);
         }
 
         async function shareJoke() {
-            if (!currentJoke || currentJoke.includes("Нажми на кубик")) {
-                alert("Сначала выбей анекдот!");
-                return;
-            }
+            if (currentJokeIndex === -1) return alert("Сначала выбей анекдот!");
+            const text = jokes[currentJokeIndex];
             if (navigator.share) {
-                try { 
-                    await navigator.share({ title: 'Ору! 😂', text: currentJoke, url: window.location.href }); 
-                } catch (err) {}
+                await navigator.share({ title: 'Ору! 😂', text: text, url: window.location.href });
             } else {
-                navigator.clipboard.writeText(currentJoke);
-                alert("Анекдот скопирован!");
+                navigator.clipboard.writeText(text);
+                alert("Скопировано!");
             }
-        }
-
-        function checkAndShowWarning() {
-            const ua = navigator.userAgent || navigator.vendor || window.opera;
-            const isWebView = /Telegram|Instagram|FBAN|FBAV|VKMobile|Line|WhatsApp/i.test(ua);
-            if (isWebView) {
-                const warning = document.getElementById('browser-warning');
-                if (warning) warning.style.display = 'block';
-            }
-        }
-
-        checkAndShowWarning();
-        // Подгрузка голосов
-        if (synth.onvoiceschanged !== undefined) {
-            synth.onvoiceschanged = () => synth.getVoices();
         }
     </script>
 </body>
